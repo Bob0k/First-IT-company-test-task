@@ -1,0 +1,248 @@
+<!-- Модальное окно для добавления статуса -->
+<div class="modal fade" id="addStatusModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Добавить статус</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{% url 'add_status' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="statusName" class="form-label">Название статуса</label>
+                        <input type="text" class="form-control" id="statusName" name="name" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для редактирования статусов -->
+{% for status in statuses %}
+<div class="modal fade" id="editStatusModal{{ status.id }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Редактировать статус</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{% url 'edit_status' %}">
+                {% csrf_token %}
+                <input type="hidden" name="status_id" value="{{ status.id }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="statusName" class="form-label">Название статуса</label>
+                        <input type="text" class="form-control" id="statusName" value="{{ status.name }}" name="name" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<!-- Модальное окно для добавления типа -->
+<div class="modal fade" id="addTypeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Добавить тип операции</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{% url 'add_type' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="typeName" class="form-label">Название типа</label>
+                        <input type="text" class="form-control" id="typeName" name="name" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для редактирования типа -->
+{% for type in transaction_types %}
+<div class="modal fade" id="editTypeModal{{ type.id }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Редактировать тип операции</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{% url 'edit_type' %}">
+                {% csrf_token %}
+                <input type="hidden" name="type_id" value="{{ type.id }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="typeName" class="form-label">Название типа</label>
+                        <input type="text" class="form-control" id="typeName" value="{{ type.name }}" name="name" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<!-- Модальное окно для добавления категории -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Добавить категорию</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{% url 'add_category' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="categoryName" class="form-label">Название категории</label>
+                        <input type="text" class="form-control" id="categoryName" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="categoryType" class="form-label">Тип операции</label>
+                        <select class="form-select" id="categoryType" name="transaction_type" required>
+                            <option value="">Выберите тип</option>
+                            {% for type in transaction_types %}
+                                <option value="{{ type.id }}">{{ type.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Модальное окно для редактирования категории -->
+{% for category in categories %}
+<div class="modal fade" id="editCategoryModal{{ category.id }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Редактировать категорию</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{% url 'edit_category' %}">
+                {% csrf_token %}
+                <input type="hidden" name="category_id" value="{{ category.id }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="categoryName" class="form-label">Название категории</label>
+                        <input type="text" class="form-control" id="categoryName" value="{{ category.name }}" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="categoryType" class="form-label">Тип операции</label>
+                        <select class="form-select" id="categoryType" name="transaction_type" required>
+                            <option value="">Выберите тип</option>
+                            {% for type in transaction_types %}
+                                <option value="{{ type.id }}" {% if type.id == category.transaction_type.id %}selected{% endif %}>{{ type.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<!-- Модальное окно для добавления подкатегории -->
+<div class="modal fade" id="addSubcategoryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Добавить подкатегорию</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{% url 'add_subcategory' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="subcategoryName" class="form-label">Название подкатегории</label>
+                        <input type="text" class="form-control" id="subcategoryName" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="subcategoryCategory" class="form-label">Категория</label>
+                        <select class="form-select" id="subcategoryCategory" name="category" required>
+                            <option value="">Выберите категорию</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }} ({{ category.transaction_type }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для редактирования подкатегории -->
+{% for subcategory in subcategories %}
+<div class="modal fade" id="editSubcategoryModal{{ subcategory.id }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Изменить подкатегорию</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{% url 'edit_subcategory' %}">
+                {% csrf_token %}
+                <input type="hidden" name="subcategory_id" value="{{ subcategory.id }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="subcategoryName" class="form-label">Название подкатегории</label>
+                        <input type="text" class="form-control" id="subcategoryName" value="{{ subcategory.name }}" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="subcategoryCategory" class="form-label">Категория</label>
+                        <select class="form-select" id="subcategoryCategory" name="category" required>
+                            <option>Выберите категорию</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}" {% if category.id == subcategory.category.id %}selected{% endif %}>{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}

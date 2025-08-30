@@ -1,0 +1,77 @@
+<div class="filter-section">
+    <h5><i class="bi bi-funnel"></i> Фильтры</h5>
+    <form method="get" id="filter-form">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label for="date_from" class="form-label">Дата с</label>
+                <input type="date" class="form-control" id="date_from" name="date_from" 
+                       value="{{ request.GET.date_from }}">
+            </div>
+            <div class="col-md-6">
+                <label for="date_to" class="form-label">Дата по</label>
+                <input type="date" class="form-control" id="date_to" name="date_to" 
+                       value="{{ request.GET.date_to }}">
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-3">  
+                <label for="status" class="form-label">Статус</label>
+                <select class="form-select" id="status" name="status">
+                    <option value="">Все</option>
+                    {% for status in statuses %}
+                        <option value="{{ status.id }}" 
+                            {% if request.GET.status == status.id|stringformat:"s" %}selected{% endif %}>
+                            {{ status.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="transaction_type" class="form-label">Тип</label>
+                <select class="form-select" id="transaction_type" name="transaction_type">
+                    <option value="">Все</option>
+                    {% for type in transaction_types %}
+                        <option value="{{ type.id }}" 
+                            {% if request.GET.transaction_type == type.id|stringformat:"s" %}selected{% endif %}>
+                            {{ type.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="category" class="form-label">Категория</label>
+                <select class="form-select" id="category" name="category">
+                    <option value="">Все</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}" 
+                            {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="subcategory" class="form-label">Подкатегория</label>
+                <select class="form-select" id="subcategory" name="subcategory">
+                    <option value="">Все</option>
+                    {% for subcategory in subcategories %}
+                        <option value="{{ subcategory.id }}" 
+                            {% if request.GET.subcategory == subcategory.id|stringformat:"s" %}selected{% endif %}>
+                            {{ subcategory.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-12">
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-filter"></i> Применить фильтры
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="resetFilters()">
+                        <i class="bi bi-x-circle"></i> Сбросить
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

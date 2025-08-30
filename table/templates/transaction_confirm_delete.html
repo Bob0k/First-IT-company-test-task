@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}Удаление операции - Учет денежных средств{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0 text-danger">
+                    <i class="bi bi-exclamation-triangle"></i> Подтверждение удаления
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger">
+                    <h5 class="alert-heading">Внимание!</h5>
+                    <p class="mb-0">Вы собираетесь удалить операцию. Это действие нельзя отменить.</p>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6>Детали операции:</h6>
+                        <table class="table table-sm">
+                            <tr>
+                                <th>Дата:</th>
+                                <td>{{ object.created_date|date:"d.m.Y" }}</td>
+                            </tr>
+                            <tr>
+                                <th>Тип:</th>
+                                <td>
+                                    <span class="badge {% if object.transaction_type.name == 'Пополнение' %}bg-success{% else %}bg-danger{% endif %}">
+                                        {{ object.transaction_type }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Категория:</th>
+                                <td>{{ object.category }}</td>
+                            </tr>
+                            <tr>
+                                <th>Подкатегория:</th>
+                                <td>{{ object.subcategory }}</td>
+                            </tr>
+                            <tr>
+                                <th>Сумма:</th>
+                                <td class="{% if object.transaction_type.name == 'Пополнение' %}amount-positive{% else %}amount-negative{% endif %}">
+                                    {% if object.transaction_type.name == 'Пополнение' %}+{% else %}-{% endif %}
+                                    {{ object.amount }} руб.
+                                </td>
+                            </tr>
+                            {% if object.comment %}
+                            <tr>
+                                <th>Комментарий:</th>
+                                <td>{{ object.comment }}</td>
+                            </tr>
+                            {% endif %}
+                        </table>
+                    </div>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2 d-md-flex">
+                        <button type="submit" class="btn btn-danger flex-fill">
+                            <i class="bi bi-trash"></i> Да, удалить
+                        </button>
+                        <a href="{% url 'transaction_list' %}" class="btn btn-outline-secondary flex-fill">
+                            <i class="bi bi-x-circle"></i> Отмена
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-body text-center">
+                <p class="text-muted mb-0">
+                    <small>Операция будет безвозвратно удалена из системы</small>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if object %}Редактирование{% else %}Создание{% endif %} операции - Учет денежных средств{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="bi bi-{% if object %}pencil{% else %}plus-circle{% endif %}"></i>
+                    {% if object %}Редактирование операции{% else %}Создание новой операции{% endif %}
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <strong>Ошибка!</strong> Пожалуйста, исправьте ошибки в форме.
+                    </div>
+                    {% endif %}
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.created_date.id_for_label }}" class="form-label">
+                                {{ form.created_date.label }} *
+                            </label>
+                            {{ form.created_date }}
+                            {% if form.created_date.errors %}
+                                <div class="text-danger">{{ form.created_date.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="{{ form.status.id_for_label }}" class="form-label">
+                                {{ form.status.label }} *
+                            </label>
+                            {{ form.status }}
+                            {% if form.status.errors %}
+                                <div class="text-danger">{{ form.status.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="{{ form.transaction_type.id_for_label }}" class="form-label">
+                                {{ form.transaction_type.label }} *
+                            </label>
+                            {{ form.transaction_type }}
+                            {% if form.transaction_type.errors %}
+                                <div class="text-danger">{{ form.transaction_type.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="{{ form.category.id_for_label }}" class="form-label">
+                                {{ form.category.label }} *
+                            </label>
+                            {{ form.category }}
+                            {% if form.category.errors %}
+                                <div class="text-danger">{{ form.category.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="{{ form.subcategory.id_for_label }}" class="form-label">
+                                {{ form.subcategory.label }} *
+                            </label>
+                            {{ form.subcategory }}
+                            {% if form.subcategory.errors %}
+                                <div class="text-danger">{{ form.subcategory.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="{{ form.amount.id_for_label }}" class="form-label">
+                                {{ form.amount.label }} *
+                            </label>
+                            {{ form.amount }}
+                            {% if form.amount.errors %}
+                                <div class="text-danger">{{ form.amount.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-12">
+                            <label for="{{ form.comment.id_for_label }}" class="form-label">
+                                {{ form.comment.label }}
+                            </label>
+                            {{ form.comment }}
+                            {% if form.comment.errors %}
+                                <div class="text-danger">{{ form.comment.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Сохранить
+                        </button>
+                        <a href="{% url 'transaction_list' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i> Отмена
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Dynamic update of categories and subcategories
+document.addEventListener('DOMContentLoaded', function() {
+    const transactionTypeSelect = document.getElementById('id_transaction_type');
+    const categorySelect = document.getElementById('id_category');
+    const subcategorySelect = document.getElementById('id_subcategory');
+    
+    function loadCategories(transactionTypeId, selectedCategoryId = null) {
+        if (transactionTypeId) {
+            fetch(`/load-categories/?transaction_type_id=${transactionTypeId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const currentValue = selectedCategoryId || categorySelect.value;
+                    categorySelect.innerHTML = '<option value="">---------</option>';
+                    data.forEach(category => {
+                        const selected = category.id == currentValue ? 'selected' : '';
+                        categorySelect.innerHTML += `<option value="${category.id}" ${selected}>${category.name}</option>`;
+                    });
+                    
+                    if (currentValue) {
+                        loadSubcategories(currentValue, subcategorySelect.value);
+                    } else {
+                        subcategorySelect.innerHTML = '<option value="">---------</option>';
+                    }
+                });
+        } else {
+            categorySelect.innerHTML = '<option value="">---------</option>';
+            subcategorySelect.innerHTML = '<option value="">---------</option>';
+        }
+    }
+    
+    function loadSubcategories(categoryId, selectedSubcategoryId = null) {
+        if (categoryId) {
+            fetch(`/load-subcategories/?category_id=${categoryId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const currentValue = selectedSubcategoryId || subcategorySelect.value;
+                    subcategorySelect.innerHTML = '<option value="">---------</option>';
+                    data.forEach(subcategory => {
+                        const selected = subcategory.id == currentValue ? 'selected' : '';
+                        subcategorySelect.innerHTML += `<option value="${subcategory.id}" ${selected}>${subcategory.name}</option>`;
+                    });
+                });
+        } else {
+            subcategorySelect.innerHTML = '<option value="">---------</option>';
+        }
+    }
+    
+        // Event handlers
+    if (transactionTypeSelect) {
+        transactionTypeSelect.addEventListener('change', function() {
+            loadCategories(this.value);
+        });
+        
+        // Load categories on page load if a type is already selected
+        if (transactionTypeSelect.value) {
+            loadCategories(transactionTypeSelect.value, categorySelect.value);
+        }
+    }
+
+    if (categorySelect) {
+        categorySelect.addEventListener('change', function() {
+            loadSubcategories(this.value);
+        });
+        
+        // Load subcategories on page load if a category is already selected
+        if (categorySelect.value) {
+            loadSubcategories(categorySelect.value, subcategorySelect.value);
+        }
+    }
+
+    // Initialize form on page load
+    function initializeForm() {
+        // If type is selected but categories aren't loaded (on validation error)
+        if (transactionTypeSelect.value && categorySelect.options.length <= 1) {
+            loadCategories(transactionTypeSelect.value, categorySelect.value);
+        }
+        
+        // If category is selected but subcategories aren't loaded (on validation error)
+        if (categorySelect.value && subcategorySelect.options.length <= 1) {
+            loadSubcategories(categorySelect.value, subcategorySelect.value);
+        }
+    }
+});
+</script>
+{% endblock %}
